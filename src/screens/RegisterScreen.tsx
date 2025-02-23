@@ -2,7 +2,15 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import React, { useEffect } from 'react';
-import { Alert, Button, StyleSheet, Text, TextInput, View } from 'react-native';
+import {
+    Alert,
+    Button,
+    StyleSheet,
+    Text,
+    TextInput,
+    TouchableOpacity,
+    View
+} from 'react-native';
 import { useRegisterMutation } from '../api/authApi';
 import { AuthStackParamList } from '../navigation/AuthStack';
 import { setToken } from '../store/authSlice';
@@ -17,7 +25,6 @@ const RegisterScreen: React.FC<RegisterScreenProps> = ({ navigation }) => {
     const [register, { data, isError, isLoading }] = useRegisterMutation();
     const dispatch = useAppDispatch();
 
-
     useEffect(() => {
         if (data) {
             dispatch(setToken(data.token));
@@ -29,10 +36,6 @@ const RegisterScreen: React.FC<RegisterScreenProps> = ({ navigation }) => {
             Alert.alert('Registration Failed', 'Please try again');
         }
     }, [data, isError]);
-
-
-
-
 
     return (
         <View style={styles.container}>
@@ -57,27 +60,46 @@ const RegisterScreen: React.FC<RegisterScreenProps> = ({ navigation }) => {
                 value={password}
                 onChangeText={setPassword}
             />
-            <Button
-                title={isLoading ? 'Registering...' : 'Register'}
-                onPress={() => register({ name, email, password })}
-            />
-            <Button
-                title="Go to Login"
-                onPress={() => navigation.navigate('Login')}
-            />
+            <TouchableOpacity onPress={() => navigation.navigate('Login')}>
+                <Text style={styles.linkText}>Go to Login</Text>
+            </TouchableOpacity>
+            <View style={styles.buttonContainer}>
+                <Button
+                    title={isLoading ? 'Registering...' : 'Register'}
+                    onPress={() => register({ name, email, password })}
+                />
+            </View>
         </View>
     );
 };
 
 const styles = StyleSheet.create({
-    container: { flex: 1, padding: 16, justifyContent: 'center' },
-    title: { fontSize: 24, marginBottom: 20 },
+    container: {
+        flex: 1,
+        padding: 16,
+        justifyContent: 'center',
+        alignItems: 'center'
+    },
+    title: {
+        fontSize: 24,
+        marginBottom: 20
+    },
     input: {
         height: 40,
         borderColor: 'gray',
         borderWidth: 1,
         marginBottom: 12,
         paddingHorizontal: 8,
+        width: '80%',
+    },
+    buttonContainer: {
+        width: '60%', // Reduced width for the register button
+        marginTop: 12,
+    },
+    linkText: {
+        color: 'blue',
+        textDecorationLine: 'underline',
+        marginBottom: 10,
     },
 });
 

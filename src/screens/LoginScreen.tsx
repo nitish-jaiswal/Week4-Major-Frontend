@@ -1,6 +1,14 @@
 // src/screens/LoginScreen.tsx
 import React, { useEffect } from 'react';
-import { View, Text, Button, StyleSheet, TextInput, Alert } from 'react-native';
+import {
+    View,
+    Text,
+    Button,
+    StyleSheet,
+    TextInput,
+    Alert,
+    TouchableOpacity
+} from 'react-native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { AuthStackParamList } from '../navigation/AuthStack';
 import { useLoginMutation } from '../api/authApi';
@@ -45,27 +53,46 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ navigation }) => {
                 value={password}
                 onChangeText={setPassword}
             />
-            <Button
-                title={isLoading ? 'Logging in...' : 'Login'}
-                onPress={() => login({ email, password })}
-            />
-            <Button
-                title="Go to Register"
-                onPress={() => navigation.navigate('Register')}
-            />
+            <View style={styles.buttonContainer}>
+                <Button
+                    title={isLoading ? 'Logging in...' : 'Login'}
+                    onPress={() => login({ email, password })}
+                />
+            </View>
+            <TouchableOpacity onPress={() => navigation.navigate('Register')}>
+                <Text style={styles.linkText}>Go to Register</Text>
+            </TouchableOpacity>
         </View>
     );
 };
 
 const styles = StyleSheet.create({
-    container: { flex: 1, padding: 16, justifyContent: 'center' },
-    title: { fontSize: 24, marginBottom: 20 },
+    container: {
+        flex: 1,
+        padding: 16,
+        justifyContent: 'center',
+        alignItems: 'center'
+    },
+    title: {
+        fontSize: 24,
+        marginBottom: 20
+    },
     input: {
         height: 40,
         borderColor: 'gray',
         borderWidth: 1,
         marginBottom: 12,
         paddingHorizontal: 8,
+        width: '80%',
+    },
+    buttonContainer: {
+        width: '60%', // Reduced width for the login button
+        marginBottom: 12,
+    },
+    linkText: {
+        color: 'blue',
+        textDecorationLine: 'underline',
+        marginTop: 10,
     },
 });
 
