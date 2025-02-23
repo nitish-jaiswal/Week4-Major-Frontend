@@ -30,6 +30,7 @@ export interface CreateTaskRequest {
 export const tasksApi = createApi({
     reducerPath: 'tasksApi',
     baseQuery: fetchBaseQuery({
+        // Update this to your system IP as needed
         baseUrl: 'http://192.168.1.5:3000',
         prepareHeaders: (headers, { getState }) => {
             const token = (getState() as RootState).auth.token;
@@ -58,8 +59,12 @@ export const tasksApi = createApi({
                 method: 'POST',
                 body: newTask,
             }),
-            invalidatesTags: [{ type: 'Tasks', id: 'LIST' }],
+            invalidatesTags: (result, error, arg) => [
+                { type: 'Tasks', id: 'LIST' },
+                { type: 'Tasks', id: `CATEGORY_${arg.category}` },
+            ],
         }),
+
         updateTask: builder.mutation<Task, UpdateTaskRequest>({
             query: ({ id, ...patch }) => ({
                 url: `/tasks/${id}`,
@@ -75,7 +80,7 @@ export const tasksApi = createApi({
             }),
             invalidatesTags: (result, error, id) => [{ type: 'Tasks', id }],
         }),
-        // New endpoint to fetch completed tasks
+
         getCompletedTasks: builder.query<Task[], void>({
             query: () => '/tasks/completed',
             providesTags: (result) =>
@@ -86,6 +91,19 @@ export const tasksApi = createApi({
                     ]
                     : [{ type: 'Tasks', id: 'COMPLETED' }],
         }),
+
+        // New endpoint to fetch tasks by category
+        getTasksByCategory: builder.query<Task[], string>({
+            query: (category) => `/tasks/by-category?category=${category}`,
+            providesTags: (result, error, category) =>
+                result
+                    ? [
+                        ...result.map(({ _id }) => ({ type: 'Tasks' as const, id: _id })),
+                        { type: 'Tasks', id: `CATEGORY_${category}` },
+                    ]
+                    : [{ type: 'Tasks', id: `CATEGORY_${category}` }],
+        }),
+
     }),
 });
 
@@ -95,4 +113,5 @@ export const {
     useUpdateTaskMutation,
     useDeleteTaskMutation,
     useGetCompletedTasksQuery,
+    useGetTasksByCategoryQuery,
 } = tasksApi;

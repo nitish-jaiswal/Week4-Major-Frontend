@@ -1,16 +1,33 @@
 // src/screens/CategoryScreen.tsx
 import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { FlatList, StyleSheet } from 'react-native';
+import CategoryCard from '../components/CategoryCard';
 
-const CategoryScreen: React.FC = () => (
-    <View style={styles.container}>
-        <Text style={styles.title}>Category Screen</Text>
-    </View>
-);
+const categories = [
+    'WORK',
+    'PERSONAL',
+    'SHOPPING',
+    'HEALTH',
+    'EDUCATION',
+    'FINANCE',
+    'OTHER',
+];
+
+const CategoryScreen: React.FC = () => {
+    return (
+        <FlatList
+            contentContainerStyle={styles.container}
+            data={categories}
+            keyExtractor={(item) => item}
+            renderItem={({ item }) => <CategoryCard category={item} />}
+        />
+    );
+};
 
 const styles = StyleSheet.create({
-    container: { flex: 1, justifyContent: 'center', alignItems: 'center' },
-    title: { fontSize: 24 },
+    container: {
+        padding: 16,
+    },
 });
 
 export default CategoryScreen;
