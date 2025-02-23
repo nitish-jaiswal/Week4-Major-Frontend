@@ -75,7 +75,24 @@ export const tasksApi = createApi({
             }),
             invalidatesTags: (result, error, id) => [{ type: 'Tasks', id }],
         }),
+        // New endpoint to fetch completed tasks
+        getCompletedTasks: builder.query<Task[], void>({
+            query: () => '/tasks/completed',
+            providesTags: (result) =>
+                result
+                    ? [
+                        ...result.map(({ _id }) => ({ type: 'Tasks' as const, id: _id })),
+                        { type: 'Tasks', id: 'COMPLETED' },
+                    ]
+                    : [{ type: 'Tasks', id: 'COMPLETED' }],
+        }),
     }),
 });
 
-export const { useGetTasksQuery, useCreateTaskMutation, useUpdateTaskMutation, useDeleteTaskMutation } = tasksApi;
+export const {
+    useGetTasksQuery,
+    useCreateTaskMutation,
+    useUpdateTaskMutation,
+    useDeleteTaskMutation,
+    useGetCompletedTasksQuery,
+} = tasksApi;
