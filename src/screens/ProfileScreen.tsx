@@ -1,10 +1,12 @@
 // src/screens/ProfileScreen.tsx
 import React from 'react';
-import { View, Text, StyleSheet, ActivityIndicator } from 'react-native';
+import { ActivityIndicator, StyleSheet, Text, View } from 'react-native';
 import { useGetProfileQuery } from '../api/authApi';
+import { useAppSelector } from '../store/hooks';
 
 const ProfileScreen: React.FC = () => {
-    const { data, error, isLoading } = useGetProfileQuery();
+    const token = useAppSelector(state => state.auth.token);
+    const { data, error, isLoading } = useGetProfileQuery(token, { skip: !token });
 
     if (isLoading) {
         return (
