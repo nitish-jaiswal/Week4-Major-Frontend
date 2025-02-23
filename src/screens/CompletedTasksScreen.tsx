@@ -1,6 +1,7 @@
 // src/screens/CompletedTasksScreen.tsx
 import React from 'react';
-import { ActivityIndicator, FlatList, RefreshControl, StyleSheet, Text, View } from 'react-native';
+import { FlatList, RefreshControl, StyleSheet, View } from 'react-native';
+import { ActivityIndicator, Provider as PaperProvider, Paragraph } from 'react-native-paper';
 import { useGetCompletedTasksQuery } from '../api/tasksApi';
 import TaskCard from '../components/TaskCard';
 
@@ -9,34 +10,47 @@ const CompletedTasksScreen: React.FC = () => {
 
     if (isLoading) {
         return (
-            <View style={styles.center}>
-                <ActivityIndicator size="large" />
-            </View>
+            <PaperProvider>
+                <View style={styles.center}>
+                    <ActivityIndicator animating={true} size="large" />
+                </View>
+            </PaperProvider>
         );
     }
 
     if (error || !tasks) {
         return (
-            <View style={styles.center}>
-                <Text>Error fetching completed tasks.</Text>
-            </View>
+            <PaperProvider>
+                <View style={styles.center}>
+                    <Paragraph>Error fetching completed tasks.</Paragraph>
+                </View>
+            </PaperProvider>
         );
     }
 
     return (
-        <FlatList
-            contentContainerStyle={styles.list}
-            data={tasks}
-            keyExtractor={(item) => item._id}
-            refreshControl={<RefreshControl refreshing={isLoading} onRefresh={refetch} />}
-            renderItem={({ item }) => <TaskCard task={item} />}
-        />
+        <PaperProvider>
+            <FlatList
+                contentContainerStyle={styles.list}
+                data={tasks}
+                keyExtractor={(item) => item._id}
+                refreshControl={<RefreshControl refreshing={isLoading} onRefresh={refetch} />}
+                renderItem={({ item }) => <TaskCard task={item} />}
+            />
+        </PaperProvider>
     );
 };
 
 const styles = StyleSheet.create({
-    center: { flex: 1, padding: 16, justifyContent: 'center', alignItems: 'center' },
-    list: { padding: 16 },
+    center: {
+        flex: 1,
+        padding: 16,
+        justifyContent: 'center',
+        alignItems: 'center'
+    },
+    list: {
+        padding: 16
+    },
 });
 
 export default CompletedTasksScreen;

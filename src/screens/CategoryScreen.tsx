@@ -1,6 +1,7 @@
 // src/screens/CategoryScreen.tsx
 import React from 'react';
 import { FlatList, StyleSheet } from 'react-native';
+import { Provider as PaperProvider } from 'react-native-paper';
 import CategoryCard from '../components/CategoryCard';
 
 const categories = [
@@ -15,12 +16,14 @@ const categories = [
 
 const CategoryScreen: React.FC = () => {
     return (
-        <FlatList
-            contentContainerStyle={styles.container}
-            data={categories}
-            keyExtractor={(item) => item}
-            renderItem={({ item }) => <CategoryCard category={item} />}
-        />
+        <PaperProvider>
+            <FlatList
+                contentContainerStyle={styles.container}
+                data={categories}
+                keyExtractor={(item) => item}
+                renderItem={({ item }) => <CategoryCard category={item} />}
+            />
+        </PaperProvider>
     );
 };
 

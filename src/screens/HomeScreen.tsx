@@ -1,24 +1,35 @@
 // src/screens/HomeScreen.tsx
+import { Picker } from '@react-native-picker/picker';
 import React, { useState } from 'react';
-import { FlatList, RefreshControl, StyleSheet, View } from 'react-native';
 import {
     ActivityIndicator,
-    Button,
-    Dialog,
-    FAB,
-    Provider as PaperProvider,
-    Paragraph,
-    Portal,
-    TextInput
-} from 'react-native-paper';
+    FlatList,
+    Modal,
+    TextInput as NativeTextInput,
+    RefreshControl,
+    StyleSheet,
+    Text,
+    View
+} from 'react-native';
+import { Button, FAB, Provider as PaperProvider } from 'react-native-paper';
 import { useCreateTaskMutation, useGetTasksQuery } from '../api/tasksApi';
 import TaskCard from '../components/TaskCard';
+
+const categoryOptions = [
+    'WORK',
+    'PERSONAL',
+    'SHOPPING',
+    'HEALTH',
+    'EDUCATION',
+    'FINANCE',
+    'OTHER',
+];
 
 const HomeScreen: React.FC = () => {
     const { data: tasks, error, isLoading, refetch } = useGetTasksQuery();
     const [createTask] = useCreateTaskMutation();
 
-    const [isDialogVisible, setDialogVisible] = useState(false);
+    const [isModalVisible, setModalVisible] = useState(false);
     const [newTitle, setNewTitle] = useState('');
     const [newDescription, setNewDescription] = useState('');
     const [newCategory, setNewCategory] = useState('');
@@ -30,7 +41,7 @@ const HomeScreen: React.FC = () => {
                 description: newDescription,
                 category: newCategory,
             }).unwrap();
-            setDialogVisible(false);
+            setModalVisible(false);
             setNewTitle('');
             setNewDescription('');
             setNewCategory('');
@@ -43,7 +54,7 @@ const HomeScreen: React.FC = () => {
         return (
             <PaperProvider>
                 <View style={styles.center}>
-                    <ActivityIndicator animating={true} size="large" />
+                    <ActivityIndicator size="large" />
                 </View>
             </PaperProvider>
         );
@@ -53,7 +64,7 @@ const HomeScreen: React.FC = () => {
         return (
             <PaperProvider>
                 <View style={styles.center}>
-                    <Paragraph>Error fetching tasks.</Paragraph>
+                    <Text>Error fetching tasks.</Text>
                 </View>
             </PaperProvider>
         );
@@ -75,42 +86,50 @@ const HomeScreen: React.FC = () => {
                     icon="plus"
                     label="Add Task"
                     extended
-                    onPress={() => setDialogVisible(true)}
+                    onPress={() => setModalVisible(true)}
                 />
 
-
-                <Portal>
-                    <Dialog visible={isDialogVisible} onDismiss={() => setDialogVisible(false)}>
-                        <Dialog.Title>Add New Task</Dialog.Title>
-                        <Dialog.Content>
-                            <TextInput
-                                label="Title"
-                                mode="outlined"
+                <Modal visible={isModalVisible} animationType="slide" transparent>
+                    <View style={styles.modalOverlay}>
+                        <View style={styles.customDialog}>
+                            <Text style={styles.dialogTitle}>Add New Task</Text>
+                            <NativeTextInput
+                                style={styles.input}
+                                placeholder="Title"
+                                placeholderTextColor="#888"
                                 value={newTitle}
                                 onChangeText={setNewTitle}
-                                style={styles.input}
                             />
-                            <TextInput
-                                label="Description"
-                                mode="outlined"
+                            <NativeTextInput
+                                style={styles.input}
+                                placeholder="Description"
+                                placeholderTextColor="#888"
                                 value={newDescription}
                                 onChangeText={setNewDescription}
-                                style={styles.input}
                             />
-                            <TextInput
-                                label="Category (e.g., PERSONAL)"
-                                mode="outlined"
-                                value={newCategory}
-                                onChangeText={setNewCategory}
-                                style={styles.input}
-                            />
-                        </Dialog.Content>
-                        <Dialog.Actions>
-                            <Button onPress={() => setDialogVisible(false)}>Cancel</Button>
-                            <Button onPress={handleAddTask}>Add</Button>
-                        </Dialog.Actions>
-                    </Dialog>
-                </Portal>
+                            <View style={styles.pickerContainer}>
+                                <Picker
+                                    selectedValue={newCategory}
+                                    style={styles.picker}
+                                    onValueChange={(itemValue) => setNewCategory(itemValue)}
+                                >
+                                    <Picker.Item label="Select Category" value="" />
+                                    {categoryOptions.map((option) => (
+                                        <Picker.Item key={option} label={option} value={option} />
+                                    ))}
+                                </Picker>
+                            </View>
+                            <View style={styles.dialogActions}>
+                                <Button mode="outlined" onPress={() => setModalVisible(false)} style={styles.dialogButton}>
+                                    Cancel
+                                </Button>
+                                <Button mode="contained" onPress={handleAddTask} style={styles.dialogButton}>
+                                    Add
+                                </Button>
+                            </View>
+                        </View>
+                    </View>
+                </Modal>
             </View>
         </PaperProvider>
     );
@@ -130,10 +149,60 @@ const styles = StyleSheet.create({
         position: 'absolute',
         margin: 16,
         right: 0,
-        bottom: 0,
+        bottom: 0
     },
     input: {
         marginBottom: 12,
+        padding: 14,
+        fontSize: 18,
+        borderWidth: 1,
+        borderColor: '#ccc',
+        borderRadius: 4,
+        color: '#000',
+    },
+    pickerContainer: {
+        borderWidth: 1,
+        borderColor: '#ccc',
+        borderRadius: 4,
+        backgroundColor: '#fff',
+        marginBottom: 12,
+    },
+    picker: {
+        height: 60,
+        width: '100%',
+        color: '#000',
+    },
+    modalOverlay: {
+        flex: 1,
+        backgroundColor: 'rgba(0,0,0,0.5)',
+        justifyContent: 'center',
+        alignItems: 'center',
+        padding: 16,
+    },
+    customDialog: {
+        backgroundColor: '#fff',
+        borderRadius: 8,
+        padding: 16,
+        width: '90%',
+        elevation: 4,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.25,
+        shadowRadius: 4,
+    },
+    dialogTitle: {
+        fontSize: 20,
+        fontWeight: 'bold',
+        marginBottom: 12
+    },
+    dialogActions: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        marginTop: 12,
+    },
+    dialogButton: {
+        flex: 1,
+        marginHorizontal: 4,
     },
 });
 
