@@ -21,6 +21,12 @@ export interface UpdateTaskRequest {
     completed: boolean;
 }
 
+export interface CreateTaskRequest {
+    title: string;
+    description: string;
+    category: string;
+}
+
 export const tasksApi = createApi({
     reducerPath: 'tasksApi',
     baseQuery: fetchBaseQuery({
@@ -46,6 +52,14 @@ export const tasksApi = createApi({
                     ]
                     : [{ type: 'Tasks', id: 'LIST' }],
         }),
+        createTask: builder.mutation<Task, CreateTaskRequest>({
+            query: (newTask) => ({
+                url: '/tasks',
+                method: 'POST',
+                body: newTask,
+            }),
+            invalidatesTags: [{ type: 'Tasks', id: 'LIST' }],
+        }),
         updateTask: builder.mutation<Task, UpdateTaskRequest>({
             query: ({ id, ...patch }) => ({
                 url: `/tasks/${id}`,
@@ -64,4 +78,4 @@ export const tasksApi = createApi({
     }),
 });
 
-export const { useGetTasksQuery, useUpdateTaskMutation, useDeleteTaskMutation } = tasksApi;
+export const { useGetTasksQuery, useCreateTaskMutation, useUpdateTaskMutation, useDeleteTaskMutation } = tasksApi;
