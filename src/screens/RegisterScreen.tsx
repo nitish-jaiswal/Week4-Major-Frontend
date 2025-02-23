@@ -2,15 +2,8 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import React, { useEffect } from 'react';
-import {
-    Alert,
-    Button,
-    StyleSheet,
-    Text,
-    TextInput,
-    TouchableOpacity,
-    View
-} from 'react-native';
+import { Alert, StyleSheet, TouchableOpacity, View } from 'react-native';
+import { Button, Text, TextInput, Title } from 'react-native-paper';
 import { useRegisterMutation } from '../api/authApi';
 import { AuthStackParamList } from '../navigation/AuthStack';
 import { setToken } from '../store/authSlice';
@@ -39,36 +32,41 @@ const RegisterScreen: React.FC<RegisterScreenProps> = ({ navigation }) => {
 
     return (
         <View style={styles.container}>
-            <Text style={styles.title}>Register</Text>
+            <Title style={styles.title}>Register</Title>
             <TextInput
-                style={styles.input}
-                placeholder="Name"
+                label="Name"
+                mode="outlined"
                 value={name}
                 onChangeText={setName}
+                style={styles.input}
             />
             <TextInput
-                style={styles.input}
-                placeholder="Email"
+                label="Email"
+                mode="outlined"
                 autoCapitalize="none"
                 value={email}
                 onChangeText={setEmail}
+                style={styles.input}
             />
             <TextInput
-                style={styles.input}
-                placeholder="Password"
+                label="Password"
+                mode="outlined"
                 secureTextEntry
                 value={password}
                 onChangeText={setPassword}
+                style={styles.input}
             />
             <TouchableOpacity onPress={() => navigation.navigate('Login')}>
                 <Text style={styles.linkText}>Go to Login</Text>
             </TouchableOpacity>
-            <View style={styles.buttonContainer}>
-                <Button
-                    title={isLoading ? 'Registering...' : 'Register'}
-                    onPress={() => register({ name, email, password })}
-                />
-            </View>
+            <Button
+                mode="contained"
+                onPress={() => register({ name, email, password })}
+                loading={isLoading}
+                style={styles.buttonContainer}
+            >
+                Register
+            </Button>
         </View>
     );
 };
@@ -85,15 +83,11 @@ const styles = StyleSheet.create({
         marginBottom: 20
     },
     input: {
-        height: 40,
-        borderColor: 'gray',
-        borderWidth: 1,
-        marginBottom: 12,
-        paddingHorizontal: 8,
         width: '80%',
+        marginBottom: 12,
     },
     buttonContainer: {
-        width: '60%', // Reduced width for the register button
+        width: '60%',
         marginTop: 12,
     },
     linkText: {

@@ -1,9 +1,9 @@
 // src/navigation/HomeTabs.tsx
-import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import HomeScreen from '../screens/HomeScreen';
+import React from 'react';
 import CategoryScreen from '../screens/CategoryScreen';
 import CompletedTasksScreen from '../screens/CompletedTasksScreen';
+import HomeScreen from '../screens/HomeScreen';
 import ProfileScreen from '../screens/ProfileScreen';
 
 export type HomeTabsParamList = {
