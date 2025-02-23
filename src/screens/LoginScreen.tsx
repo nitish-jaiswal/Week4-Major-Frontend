@@ -2,8 +2,8 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import React, { useEffect } from 'react';
-import { Alert, StyleSheet, View } from 'react-native';
-import { Button, TextInput, Title } from 'react-native-paper';
+import { Alert, StyleSheet, TouchableOpacity, View } from 'react-native';
+import { Button, Text, TextInput, Title } from 'react-native-paper';
 import { useLoginMutation } from '../api/authApi';
 import { AuthStackParamList } from '../navigation/AuthStack';
 import { setToken } from '../store/authSlice';
@@ -55,13 +55,9 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ navigation }) => {
             >
                 Login
             </Button>
-            <Button
-                mode="text"
-                onPress={() => navigation.navigate('Register')}
-                labelStyle={styles.linkText}
-            >
-                Go to Register
-            </Button>
+            <TouchableOpacity onPress={() => navigation.navigate('Register')}>
+                <Text style={styles.linkText}>New User?</Text>
+            </TouchableOpacity>
         </View>
     );
 };
@@ -89,6 +85,7 @@ const styles = StyleSheet.create({
         color: 'blue',
         textDecorationLine: 'underline',
         marginTop: 10,
+        fontSize: 16
     },
 });
 

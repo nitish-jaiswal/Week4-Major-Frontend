@@ -2,8 +2,21 @@
 import { useNavigation, useRoute } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import React, { useEffect, useState } from 'react';
-import { ActivityIndicator, Alert, Button, StyleSheet, Switch, Text, TextInput, View } from 'react-native';
-import { useDeleteTaskMutation, useGetTaskByIdQuery, useUpdateTaskMutation } from '../api/tasksApi';
+import { Alert, StyleSheet, View } from 'react-native';
+import {
+    ActivityIndicator,
+    Button,
+    Provider as PaperProvider,
+    Paragraph,
+    Switch,
+    TextInput,
+    Title,
+} from 'react-native-paper';
+import {
+    useDeleteTaskMutation,
+    useGetTaskByIdQuery,
+    useUpdateTaskMutation,
+} from '../api/tasksApi';
 import type { AuthStackParamList } from '../navigation/AuthStack';
 
 type RouteParams = {
@@ -24,7 +37,6 @@ const TaskDetailScreen: React.FC = () => {
     const [description, setDescription] = useState('');
     const [completed, setCompleted] = useState(false);
 
-    // When task is fetched, update local state (if not editing)
     useEffect(() => {
         if (task && !isEditing) {
             setTitle(task.title);
@@ -37,9 +49,8 @@ const TaskDetailScreen: React.FC = () => {
         try {
             await updateTask({ id, title, description, completed }).unwrap();
             setIsEditing(false);
-            refetch(); // Refresh details after update
+            refetch();
         } catch (err) {
-            console.log('Update error', err);
             Alert.alert('Error', 'Failed to update the task.');
         }
     };
@@ -55,75 +66,119 @@ const TaskDetailScreen: React.FC = () => {
                         await deleteTask(id).unwrap();
                         navigation.goBack();
                     } catch (err) {
-                        console.log('Delete error', err);
                         Alert.alert('Error', 'Failed to delete the task.');
                     }
-                }
-            }
+                },
+            },
         ]);
     };
 
     if (isLoading) {
         return (
-            <View style={styles.center}>
-                <ActivityIndicator size="large" />
-            </View>
+            <PaperProvider>
+                <View style={styles.center}>
+                    <ActivityIndicator animating={true} size="large" />
+                </View>
+            </PaperProvider>
         );
     }
 
     if (error || !task) {
         return (
-            <View style={styles.center}>
-                <Text>Error fetching task details.</Text>
-            </View>
+            <PaperProvider>
+                <View style={styles.center}>
+                    <Paragraph style={styles.solidText}>Error fetching task details.</Paragraph>
+                </View>
+            </PaperProvider>
         );
     }
 
     return (
-        <View style={styles.container}>
-            {isEditing ? (
-                <>
-                    <Text style={styles.label}>Title:</Text>
-                    <TextInput
-                        style={styles.input}
-                        value={title}
-                        onChangeText={setTitle}
-                    />
-                    <Text style={styles.label}>Description:</Text>
-                    <TextInput
-                        style={styles.input}
-                        value={description}
-                        onChangeText={setDescription}
-                    />
-                    <View style={styles.switchContainer}>
-                        <Text style={styles.label}>Completed:</Text>
-                        <Switch value={completed} onValueChange={setCompleted} />
-                    </View>
-                    <View style={styles.buttonRow}>
-                        <Button title={isUpdating ? 'Saving...' : 'Save'} onPress={handleSave} />
-                        <Button title="Cancel" onPress={() => setIsEditing(false)} />
-                    </View>
-                </>
-            ) : (
-                <>
-                    <Text style={styles.title}>{task.title}</Text>
-                    <Text style={styles.label}>Description:</Text>
-                    <Text style={styles.value}>{task.description}</Text>
-                    <Text style={styles.label}>Status:</Text>
-                    <Text style={styles.value}>{task.completed ? 'Completed' : 'Pending'}</Text>
-                    <Text style={styles.label}>Category:</Text>
-                    <Text style={styles.value}>{task.category}</Text>
-                    <Text style={styles.label}>Created At:</Text>
-                    <Text style={styles.value}>{new Date(task.createdAt).toLocaleString()}</Text>
-                    <Text style={styles.label}>Updated At:</Text>
-                    <Text style={styles.value}>{new Date(task.updatedAt).toLocaleString()}</Text>
-                    <View style={styles.buttonRow}>
-                        <Button title="Edit" onPress={() => setIsEditing(true)} />
-                        <Button title={isDeleting ? 'Deleting...' : 'Delete'} onPress={handleDelete} color="red" />
-                    </View>
-                </>
-            )}
-        </View>
+        <PaperProvider>
+            <View style={styles.container}>
+                {isEditing ? (
+                    <>
+                        <Title style={[styles.title, styles.solidText]}>Edit Task</Title>
+                        <TextInput
+                            label="Title"
+                            mode="outlined"
+                            value={title}
+                            onChangeText={setTitle}
+                            style={[styles.input, { color: '#000' }]}
+                            contentStyle={{ color: '#000' }}
+                            theme={{
+                                colors: {
+                                    background: '#fff',
+                                    text: '#000',
+                                    placeholder: '#000',
+                                    primary: '#000',
+                                },
+                            }}
+                        />
+                        <TextInput
+                            label="Description"
+                            mode="outlined"
+                            value={description}
+                            onChangeText={setDescription}
+                            style={[styles.input, { color: '#000' }]}
+                            contentStyle={{ color: '#000' }}
+                            theme={{
+                                colors: {
+                                    background: '#fff',
+                                    text: '#000',
+                                    placeholder: '#000',
+                                    primary: '#000',
+                                },
+                            }}
+                        />
+                        <View style={styles.switchContainer}>
+                            <Paragraph style={[styles.label, styles.solidText]}>Completed:</Paragraph>
+                            <Switch value={completed} onValueChange={setCompleted} color="#51158C" />
+                        </View>
+                        <View style={styles.buttonRow}>
+                            <Button mode="contained" onPress={handleSave} style={styles.button}>
+                                {isUpdating ? 'Saving...' : 'Save'}
+                            </Button>
+                            <Button mode="outlined" onPress={() => setIsEditing(false)} style={styles.button}>
+                                Cancel
+                            </Button>
+                        </View>
+                    </>
+                ) : (
+                    <>
+                        <Title style={[styles.title, styles.solidText]}>{task.title}</Title>
+                        <Paragraph style={[styles.label, styles.solidText]}>Description:</Paragraph>
+                        <Paragraph style={[styles.value, styles.solidText]}>{task.description}</Paragraph>
+                        <Paragraph style={[styles.label, styles.solidText]}>Status:</Paragraph>
+                        <Paragraph style={[styles.value, styles.solidText]}>
+                            {task.completed ? 'Completed' : 'Pending'}
+                        </Paragraph>
+                        <Paragraph style={[styles.label, styles.solidText]}>Category:</Paragraph>
+                        <Paragraph style={[styles.value, styles.solidText]}>{task.category}</Paragraph>
+                        <Paragraph style={[styles.label, styles.solidText]}>Created At:</Paragraph>
+                        <Paragraph style={[styles.value, styles.solidText]}>
+                            {new Date(task.createdAt).toLocaleString()}
+                        </Paragraph>
+                        <Paragraph style={[styles.label, styles.solidText]}>Updated At:</Paragraph>
+                        <Paragraph style={[styles.value, styles.solidText]}>
+                            {new Date(task.updatedAt).toLocaleString()}
+                        </Paragraph>
+                        <View style={styles.buttonRow}>
+                            <Button mode="contained" onPress={() => setIsEditing(true)} style={styles.button}>
+                                Edit
+                            </Button>
+                            <Button
+                                mode="contained"
+                                onPress={handleDelete}
+                                style={[styles.button, { backgroundColor: '#C8393A' }]}
+                            >
+                                {isDeleting ? 'Deleting...' : 'Delete'}
+                            </Button>
+                        </View>
+                    </>
+                )}
+            </View>
+        </PaperProvider>
     );
 };
 
@@ -133,23 +188,11 @@ const styles = StyleSheet.create({
     title: { fontSize: 24, fontWeight: 'bold', marginBottom: 12 },
     label: { fontSize: 16, fontWeight: '600', marginTop: 8 },
     value: { fontSize: 16, marginBottom: 8 },
-    input: {
-        borderWidth: 1,
-        borderColor: '#ccc',
-        padding: 8,
-        marginVertical: 6,
-        borderRadius: 4,
-    },
-    buttonRow: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        marginTop: 16,
-    },
-    switchContainer: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        marginVertical: 8,
-    },
+    input: { marginVertical: 6 },
+    switchContainer: { flexDirection: 'row', alignItems: 'center', marginVertical: 8 },
+    buttonRow: { flexDirection: 'row', justifyContent: 'space-between', marginTop: 16 },
+    button: { flex: 1, marginHorizontal: 4 },
+    solidText: { color: '#000', opacity: 1 },
 });
 
 export default TaskDetailScreen;

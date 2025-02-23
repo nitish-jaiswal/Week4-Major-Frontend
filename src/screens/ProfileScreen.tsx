@@ -32,9 +32,11 @@ const ProfileScreen: React.FC = () => {
     return (
         <PaperProvider>
             <View style={styles.container}>
-                <Title style={[styles.title, styles.text]}>Profile</Title>
-                <Paragraph style={styles.text}>Name: {data.name}</Paragraph>
-                <Paragraph style={styles.text}>Email: {data.email}</Paragraph>
+                <View style={styles.circle}>
+                    <Title style={[styles.title, styles.text]}>Profile</Title>
+                    <Paragraph style={[styles.profileText, styles.text]}>Hello {data.name}</Paragraph>
+                    <Paragraph style={[styles.profileText, styles.text]}>{data.email}</Paragraph>
+                </View>
             </View>
         </PaperProvider>
     );
@@ -43,17 +45,31 @@ const ProfileScreen: React.FC = () => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        padding: 16,
         justifyContent: 'center',
         alignItems: 'center'
     },
+    circle: {
+        width: 300,
+        height: 300,
+        borderRadius: 150,
+        borderWidth: 3,
+        borderColor: '#51158C',
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: '#fff',
+        padding: 16,
+    },
     title: {
         fontSize: 24,
-        marginBottom: 20
+        marginBottom: 20,
+    },
+    profileText: {
+        fontSize: 18, // Increased font size for name and email
+        marginVertical: 4,
     },
     text: {
-        color: '#51158C', // solid black color
-        opacity: 1,    // full opacity
+        color: '#51158C',
+        opacity: 1,
     },
 });
 

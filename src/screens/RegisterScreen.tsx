@@ -56,9 +56,6 @@ const RegisterScreen: React.FC<RegisterScreenProps> = ({ navigation }) => {
                 onChangeText={setPassword}
                 style={styles.input}
             />
-            <TouchableOpacity onPress={() => navigation.navigate('Login')}>
-                <Text style={styles.linkText}>Go to Login</Text>
-            </TouchableOpacity>
             <Button
                 mode="contained"
                 onPress={() => register({ name, email, password })}
@@ -67,6 +64,9 @@ const RegisterScreen: React.FC<RegisterScreenProps> = ({ navigation }) => {
             >
                 Register
             </Button>
+            <TouchableOpacity onPress={() => navigation.navigate('Login')}>
+                <Text style={styles.linkText}>Already Have an account?</Text>
+            </TouchableOpacity>
         </View>
     );
 };
@@ -88,12 +88,13 @@ const styles = StyleSheet.create({
     },
     buttonContainer: {
         width: '60%',
-        marginTop: 12,
+        marginBottom: 20
     },
     linkText: {
         color: 'blue',
         textDecorationLine: 'underline',
         marginBottom: 10,
+        fontSize: 16
     },
 });
 
