@@ -104,6 +104,11 @@ export const tasksApi = createApi({
                     : [{ type: 'Tasks', id: `CATEGORY_${category}` }],
         }),
 
+        // New endpoint to fetch a single task by ID
+        getTaskById: builder.query<Task, string>({
+            query: (id) => `/tasks/${id}`,
+            providesTags: (result, error, id) => [{ type: 'Tasks', id }],
+        }),
     }),
 });
 
@@ -114,4 +119,5 @@ export const {
     useDeleteTaskMutation,
     useGetCompletedTasksQuery,
     useGetTasksByCategoryQuery,
+    useGetTaskByIdQuery,
 } = tasksApi;
