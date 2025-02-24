@@ -1,6 +1,7 @@
 // App.tsx
-import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
+import React from 'react';
+
 import { Provider } from 'react-redux';
 import AuthStack from './src/navigation/AuthStack';
 import { store } from './src/store/store';

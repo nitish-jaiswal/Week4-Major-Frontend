@@ -2,7 +2,8 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import React, { useEffect } from 'react';
-import { Alert, Button, StyleSheet, Text, TextInput, View } from 'react-native';
+import { Alert, StyleSheet, TouchableOpacity, View } from 'react-native';
+import { Button, Text, TextInput, Title } from 'react-native-paper';
 import { useRegisterMutation } from '../api/authApi';
 import { AuthStackParamList } from '../navigation/AuthStack';
 import { setToken } from '../store/authSlice';
@@ -17,7 +18,6 @@ const RegisterScreen: React.FC<RegisterScreenProps> = ({ navigation }) => {
     const [register, { data, isError, isLoading }] = useRegisterMutation();
     const dispatch = useAppDispatch();
 
-
     useEffect(() => {
         if (data) {
             dispatch(setToken(data.token));
@@ -30,54 +30,71 @@ const RegisterScreen: React.FC<RegisterScreenProps> = ({ navigation }) => {
         }
     }, [data, isError]);
 
-
-
-
-
     return (
         <View style={styles.container}>
-            <Text style={styles.title}>Register</Text>
+            <Title style={styles.title}>Register</Title>
             <TextInput
-                style={styles.input}
-                placeholder="Name"
+                label="Name"
+                mode="outlined"
                 value={name}
                 onChangeText={setName}
+                style={styles.input}
             />
             <TextInput
-                style={styles.input}
-                placeholder="Email"
+                label="Email"
+                mode="outlined"
                 autoCapitalize="none"
                 value={email}
                 onChangeText={setEmail}
+                style={styles.input}
             />
             <TextInput
-                style={styles.input}
-                placeholder="Password"
+                label="Password"
+                mode="outlined"
                 secureTextEntry
                 value={password}
                 onChangeText={setPassword}
+                style={styles.input}
             />
             <Button
-                title={isLoading ? 'Registering...' : 'Register'}
+                mode="contained"
                 onPress={() => register({ name, email, password })}
-            />
-            <Button
-                title="Go to Login"
-                onPress={() => navigation.navigate('Login')}
-            />
+                loading={isLoading}
+                style={styles.buttonContainer}
+            >
+                Register
+            </Button>
+            <TouchableOpacity onPress={() => navigation.navigate('Login')}>
+                <Text style={styles.linkText}>Already Have an account?</Text>
+            </TouchableOpacity>
         </View>
     );
 };
 
 const styles = StyleSheet.create({
-    container: { flex: 1, padding: 16, justifyContent: 'center' },
-    title: { fontSize: 24, marginBottom: 20 },
+    container: {
+        flex: 1,
+        padding: 16,
+        justifyContent: 'center',
+        alignItems: 'center'
+    },
+    title: {
+        fontSize: 24,
+        marginBottom: 20
+    },
     input: {
-        height: 40,
-        borderColor: 'gray',
-        borderWidth: 1,
+        width: '80%',
         marginBottom: 12,
-        paddingHorizontal: 8,
+    },
+    buttonContainer: {
+        width: '60%',
+        marginBottom: 20
+    },
+    linkText: {
+        color: 'blue',
+        textDecorationLine: 'underline',
+        marginBottom: 10,
+        fontSize: 16
     },
 });
 
